@@ -1,0 +1,26 @@
+.*/
+.profile
+.bash_history
+.bash_logout
+.bashrc
+.cache
+.cloud-locale-test.skip
+.config
+.docker
+.git
+.gitconfig
+.local
+.profile
+.ssh
+.sudo_as_admin_successful
+.vscode-server
+.wget-hsts
+.python_history
+.env
+.lesshst
+
+# build
+foodgram_docker/frontend/
+traefik/letsencrypt/
+
+

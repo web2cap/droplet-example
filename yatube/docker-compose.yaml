@@ -1,0 +1,55 @@
+version: '3.3'
+
+services:
+  yatube_db:
+    image: postgres:13.0-alpine
+    environment:
+      POSTGRES_PASSWORD: changeme
+    volumes:
+      - /var/lib/postgresql/data/
+    networks:
+      - yatube_net
+    env_file:
+      - ./.env
+
+  yatube_web:
+    image: web2cap/yatube_web:latest
+    restart: always
+    volumes:
+      - static_value:/app/static/
+      - media_value:/app/media/
+    networks:
+      - yatube_net
+    depends_on:
+      - yatube_db
+    env_file:
+      - ./.env
+
+  yatube_nginx:
+    image: nginx:1.19.3
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_net"
+      - "traefik.http.routers.yatube_nginx.entrypoints=websecure"
+      - "traefik.http.routers.yatube_nginx.rule=Host(`blog.w2c.net.eu.org`)"
+      - "traefik.http.routers.yatube_nginx.tls.certresolver=myresolver"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - static_value:/var/html/static/
+      - media_value:/var/html/media/
+    networks:
+      - yatube_net
+      - traefik_net
+    depends_on:
+      - yatube_web
+
+volumes:
+  static_value:
+  media_value:
+
+
+networks:
+  yatube_net:
+    name: yatube_net
+  traefik_net:
+    external: true
